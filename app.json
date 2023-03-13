@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "test_expo",
-    "slug": "test_expo",
+    "slug": "test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.liderteam.tablo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0c56e0f5-d64e-48b6-9b36-e95f1f7c7c9b"
+      }
+    },
+    "owner": "dave93"
   }
 }
