@@ -12,16 +12,12 @@ import {
 } from "react-native";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import korrona from "./korona.png";
-import Sound from "react-native-sound";
+import { Audio } from "expo-av";
 
 import music from "./signal_of_mario.mp3";
 import firstPlaceSound from "./The_king.mp3";
-var ding = new Sound(music, Sound.MAIN_BUNDLE, (error) => {});
-var firstPlaceDing = new Sound(
-  firstPlaceSound,
-  Sound.MAIN_BUNDLE,
-  (error) => {}
-);
+var ding;
+var firstPlaceDing;
 
 const firstCellHeight = 14;
 
@@ -41,13 +37,18 @@ export default class App extends Component {
   }
 
   componentWillUnmount() {
-    ding.stop();
-    ding.release();
-    firstPlaceDing.stop();
-    firstPlaceDing.release();
+    (async () => {
+      await ding.unloadAsync();
+      await firstPlaceDing.unloadAsync();
+    })();
   }
 
   componentDidMount() {
+    const { sound: soundObject } = Audio.Sound.createAsync(music);
+    ding = soundObject;
+
+    const { sound: soundObject1 } = Audio.Sound.createAsync(firstPlaceSound);
+    firstPlaceDing = soundObject1;
     setInterval(() => {
       fetch("http://192.168.100.14:5000/", {
         method: "GET",
@@ -57,12 +58,12 @@ export default class App extends Component {
         },
       })
         .then((response) => response.json())
-        .then((result) => {
+        .then(async (result) => {
           if (this.state.gen < result.subss) {
-            ding.play();
+            ding && (await ding.playAsync());
           } else {
-            ding.stop();
-            ding.release();
+            // ding.stop();
+            // ding.release();
             // this.setState({
             //   gen: result.subss
             // })
@@ -119,10 +120,10 @@ export default class App extends Component {
               clonePhoneNumbers.length > 0 &&
               prevPhoneNumbers[0].name != clonePhoneNumbers[0].name
             ) {
-              firstPlaceDing.play();
+              await firstPlaceDing.asyncPlay();
             } else {
-              firstPlaceDing.stop();
-              firstPlaceDing.release();
+              // firstPlaceDing.stop();
+              // firstPlaceDing.release();
             }
             this.setState(() => ({
               maindata: clonePhoneNumbers,
