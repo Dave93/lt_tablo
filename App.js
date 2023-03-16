@@ -57,8 +57,24 @@ export default class App extends Component {
           "Content-Type": "application/json",
         },
       })
-        .then((response) => response.json())
+        .then((response) => {
+          console.log("response", response);
+          if (response.status == 200) {
+            return response.json();
+          } else {
+            return {
+              message: [],
+              subss: 0,
+              cibtro: [],
+              manager: [],
+            };
+          }
+        })
         .then(async (result) => {
+          if (result.message.length == 0) {
+            return;
+          }
+
           if (this.state.gen < result.subss) {
             ding && (await ding.playAsync());
           } else {
@@ -113,17 +129,32 @@ export default class App extends Component {
               (contact.sum = bbb), (contact.count = contact.arrasum.length);
             }
             clonePhoneNumbers.sort((a, b) => {
-              return a.sum < b.sum;
+              return b.sum - a.sum;
             });
             if (
               prevPhoneNumbers.length > 0 &&
               clonePhoneNumbers.length > 0 &&
               prevPhoneNumbers[0].name != clonePhoneNumbers[0].name
             ) {
-              await firstPlaceDing.asyncPlay();
+              if (!firstPlaceDing) {
+                const { sound: soundObject1 } = await Audio.Sound.createAsync(
+                  firstPlaceSound
+                );
+                firstPlaceDing = soundObject1;
+              }
+              //            console.log('firstPlaceDing', firstPlaceDing);
+              await firstPlaceDing.playAsync();
             } else {
-              // firstPlaceDing.stop();
-              // firstPlaceDing.release();
+              if (!ding) {
+                const { sound: soundObject } = await Audio.Sound.createAsync(
+                  music
+                );
+                ding = soundObject;
+              }
+              //                            debugger;
+              //console.log(sum);
+              //                console.log('ding', ding);
+              await ding.playAsync();
             }
             this.setState(() => ({
               maindata: clonePhoneNumbers,
@@ -133,7 +164,7 @@ export default class App extends Component {
         .catch((error) => {
           console.error("Error:", error);
         });
-    }, 10000);
+    }, 5000);
   }
 
   render() {
@@ -157,366 +188,381 @@ export default class App extends Component {
           <View>
             <ScrollView>
               <View style={styles.container}>
-                <Grid>
-                  <Col size={30}>
-                    <Row style={styles.cellerrss}>
-                      <Text style={styles.titletexterrssss}>№</Text>
-                    </Row>
-                    {maindata.map((user, ids) => (
-                      <Row key={ids} style={styles.cell}>
-                        {(() => {
-                          if (ids == 0) {
-                            return (
-                              <Row
-                                key={ids}
-                                style={
-                                  (styles.cellf,
-                                  {
-                                    backgroundColor: "#91BAFF",
-                                  })
-                                }
-                              >
-                                <Image
-                                  style={{
-                                    width: 20,
-                                    height: firstCellHeight,
-                                    marginRight: 17,
-                                    marginLeft: 10,
-                                    marginTop: 2,
-                                  }}
-                                  source={korrona}
-                                />
-                                <Text
-                                  style={styles.titletextssseerrrdsfdsfsd00}
+                <View>
+                  <Grid>
+                    <Col size={30}>
+                      <Row style={styles.cellerrss}>
+                        <Text style={styles.titletexterrssss}>№</Text>
+                      </Row>
+                      {maindata.map((user, ids) => (
+                        <Row key={ids} style={styles.cell}>
+                          {(() => {
+                            if (ids == 0) {
+                              return (
+                                <Row
+                                  key={ids}
+                                  style={
+                                    (styles.cellf,
+                                    {
+                                      backgroundColor: "#91BAFF",
+                                    })
+                                  }
                                 >
-                                  {ids + 1}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 1) {
-                            return (
-                              <Row key={ids} style={styles.cellf}>
-                                <View
-                                  style={{
-                                    width: 20,
-                                    height: firstCellHeight,
-                                    marginLeft: 4,
-                                  }}
-                                ></View>
-                                <Text style={styles.titletextsss}>
-                                  {ids + 1}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 2) {
-                            return (
-                              <Row key={ids} style={styles.cellf}>
-                                <View
-                                  style={{
-                                    width: 20,
-                                    height: firstCellHeight,
-                                    marginLeft: 4,
-                                  }}
-                                ></View>
-                                <Text style={styles.titletextsss}>
-                                  {ids + 1}
-                                </Text>
-                              </Row>
-                            );
-                          } else {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <View
-                                  style={{
-                                    width: 20,
-                                    height: firstCellHeight,
-                                    marginLeft: 4,
-                                  }}
-                                ></View>
-                                <Text style={styles.titletext}>{ids + 1}</Text>
-                              </Row>
-                            );
-                          }
-                        })()}
-                      </Row>
-                    ))}
-                  </Col>
+                                  <Image
+                                    style={{
+                                      width: 20,
+                                      height: firstCellHeight,
+                                      marginRight: 17,
+                                      marginLeft: 10,
+                                      marginTop: 2,
+                                    }}
+                                    source={korrona}
+                                  />
+                                  <Text
+                                    style={styles.titletextssseerrrdsfdsfsd00}
+                                  >
+                                    {ids + 1}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 1) {
+                              return (
+                                <Row key={ids} style={styles.cellf}>
+                                  <View
+                                    style={{
+                                      width: 20,
+                                      height: firstCellHeight,
+                                      marginLeft: 4,
+                                    }}
+                                  ></View>
+                                  <Text style={styles.titletextsss}>
+                                    {ids + 1}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 2) {
+                              return (
+                                <Row key={ids} style={styles.cellf}>
+                                  <View
+                                    style={{
+                                      width: 20,
+                                      height: firstCellHeight,
+                                      marginLeft: 4,
+                                    }}
+                                  ></View>
+                                  <Text style={styles.titletextsss}>
+                                    {ids + 1}
+                                  </Text>
+                                </Row>
+                              );
+                            } else {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <View
+                                    style={{
+                                      width: 20,
+                                      height: firstCellHeight,
+                                      marginLeft: 4,
+                                    }}
+                                  ></View>
+                                  <Text style={styles.titletext}>
+                                    {ids + 1}
+                                  </Text>
+                                </Row>
+                              );
+                            }
+                          })()}
+                        </Row>
+                      ))}
+                    </Col>
 
-                  <Col size={100}>
-                    <Row style={styles.cellerrss}>
-                      <Text style={styles.titletexterrssss}>Рейтинг</Text>
-                    </Row>
-                    {maindata.map((user, ids) => (
-                      <Row key={ids} style={styles.cell}>
-                        {(() => {
-                          if (ids == 0) {
-                            return (
-                              <Row key={ids} style={styles.cellf}>
-                                <Text style={styles.titletextssseerrrdsfdsfsd}>
-                                  КИНГКОНГ
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 1) {
-                            return (
-                              <Row key={ids} style={styles.cellf}>
-                                <Text style={styles.titletextsss}>ГРОМИЛА</Text>
-                              </Row>
-                            );
-                          } else if (ids == 2) {
-                            return (
-                              <Row key={ids} style={styles.cellf}>
-                                <Text style={styles.titletextsss}>МОНСТР</Text>
-                              </Row>
-                            );
-                          } else if (ids == 3) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>АМБАЛ</Text>
-                              </Row>
-                            );
-                          } else if (ids == 4) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>БУГАЙ</Text>
-                              </Row>
-                            );
-                          } else if (ids == 5) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>КРЕПЫШ</Text>
-                              </Row>
-                            );
-                          } else if (ids == 6) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>ДЕТИНА </Text>
-                              </Row>
-                            );
-                          } else if (ids == 7) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>КРЕНДЕЛЬ</Text>
-                              </Row>
-                            );
-                          } else if (ids == 8) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>ЧАЙНИК</Text>
-                              </Row>
-                            );
-                          } else if (ids == 9) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>САЛАГА</Text>
-                              </Row>
-                            );
-                          } else if (ids == 10) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}> СЛАБАК</Text>
-                              </Row>
-                            );
-                          } else if (ids == 11) {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>ДОХЛЯК</Text>
-                              </Row>
-                            );
-                          } else {
-                            return (
-                              <Row key={ids} style={styles.cell}>
-                                <Text style={styles.titletext}>ИНФУЗОРИЯ</Text>
-                              </Row>
-                            );
-                          }
-                        })()}
+                    <Col size={100}>
+                      <Row style={styles.cellerrss}>
+                        <Text style={styles.titletexterrssss}>Рейтинг</Text>
                       </Row>
-                    ))}
-                  </Col>
+                      {maindata.map((user, ids) => (
+                        <Row key={ids} style={styles.cell}>
+                          {(() => {
+                            if (ids == 0) {
+                              return (
+                                <Row key={ids} style={styles.cellf}>
+                                  <Text
+                                    style={styles.titletextssseerrrdsfdsfsd}
+                                  >
+                                    КИНГКОНГ
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 1) {
+                              return (
+                                <Row key={ids} style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    ГРОМИЛА
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 2) {
+                              return (
+                                <Row key={ids} style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    МОНСТР
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 3) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>АМБАЛ</Text>
+                                </Row>
+                              );
+                            } else if (ids == 4) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>БУГАЙ</Text>
+                                </Row>
+                              );
+                            } else if (ids == 5) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>КРЕПЫШ</Text>
+                                </Row>
+                              );
+                            } else if (ids == 6) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>ДЕТИНА </Text>
+                                </Row>
+                              );
+                            } else if (ids == 7) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>КРЕНДЕЛЬ</Text>
+                                </Row>
+                              );
+                            } else if (ids == 8) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>ЧАЙНИК</Text>
+                                </Row>
+                              );
+                            } else if (ids == 9) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>САЛАГА</Text>
+                                </Row>
+                              );
+                            } else if (ids == 10) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}> СЛАБАК</Text>
+                                </Row>
+                              );
+                            } else if (ids == 11) {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>ДОХЛЯК</Text>
+                                </Row>
+                              );
+                            } else {
+                              return (
+                                <Row key={ids} style={styles.cell}>
+                                  <Text style={styles.titletext}>
+                                    ИНФУЗОРИЯ
+                                  </Text>
+                                </Row>
+                              );
+                            }
+                          })()}
+                        </Row>
+                      ))}
+                    </Col>
 
-                  <Col size={100}>
-                    <Row style={styles.cellerrss}>
-                      <Text style={styles.titletexterrssss}>ФИО</Text>
-                    </Row>
-                    {maindata.map((user, ids) => (
-                      <Row key={ids} style={styles.cell}>
-                        {(() => {
-                          if (ids == 0) {
-                            return (
-                              <Row style={styles.cellf}>
-                                {(() => {
-                                  let str = user.name.split(" ");
-                                  return (
-                                    <Text
-                                      style={styles.titletextssseerrrdsfdsfsd}
-                                    >
-                                      {str[1]} {str[2].charAt(0)}.
-                                    </Text>
-                                  );
-                                })()}
-                              </Row>
-                            );
-                          } else if (ids == 1) {
-                            return (
-                              <Row style={styles.cellf}>
-                                {(() => {
-                                  let str = user.name.split(" ");
-                                  return (
-                                    <Text style={styles.titletextsss}>
-                                      {str[1]} {str[2].charAt(0)}.
-                                    </Text>
-                                  );
-                                })()}
-                              </Row>
-                            );
-                          } else if (ids == 2) {
-                            return (
-                              <Row style={styles.cellf}>
-                                {(() => {
-                                  let str = user.name.split(" ");
-                                  return (
-                                    <Text style={styles.titletextsss}>
-                                      {str[1]} {str[2].charAt(0)}.
-                                    </Text>
-                                  );
-                                })()}
-                              </Row>
-                            );
-                          } else {
-                            return (
-                              <Row style={styles.cell}>
-                                {(() => {
-                                  let str = user.name.split(" ");
-                                  return (
-                                    <Text style={styles.titletext}>
-                                      {str[1]} {str[2].charAt(0)}.
-                                    </Text>
-                                  );
-                                })()}
-                              </Row>
-                            );
-                          }
-                        })()}
+                    <Col size={100}>
+                      <Row style={styles.cellerrss}>
+                        <Text style={styles.titletexterrssss}>ФИО</Text>
                       </Row>
-                    ))}
-                  </Col>
-                  <Col size={100}>
-                    <Row style={styles.cellerrss}>
-                      <Text style={styles.titletexterrssss}>Сумма</Text>
-                    </Row>
+                      {maindata.map((user, ids) => (
+                        <Row key={ids} style={styles.cell}>
+                          {(() => {
+                            if (ids == 0) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  {(() => {
+                                    let str = user.name.split(" ");
+                                    return (
+                                      <Text
+                                        style={styles.titletextssseerrrdsfdsfsd}
+                                      >
+                                        {str[1]} {str[2].charAt(0)}.
+                                      </Text>
+                                    );
+                                  })()}
+                                </Row>
+                              );
+                            } else if (ids == 1) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  {(() => {
+                                    let str = user.name.split(" ");
+                                    return (
+                                      <Text style={styles.titletextsss}>
+                                        {str[1]} {str[2].charAt(0)}.
+                                      </Text>
+                                    );
+                                  })()}
+                                </Row>
+                              );
+                            } else if (ids == 2) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  {(() => {
+                                    let str = user.name.split(" ");
+                                    return (
+                                      <Text style={styles.titletextsss}>
+                                        {str[1]} {str[2].charAt(0)}.
+                                      </Text>
+                                    );
+                                  })()}
+                                </Row>
+                              );
+                            } else {
+                              return (
+                                <Row style={styles.cell}>
+                                  {(() => {
+                                    let str = user.name.split(" ");
+                                    return (
+                                      <Text style={styles.titletext}>
+                                        {str[1]} {str[2].charAt(0)}.
+                                      </Text>
+                                    );
+                                  })()}
+                                </Row>
+                              );
+                            }
+                          })()}
+                        </Row>
+                      ))}
+                    </Col>
+                    <Col size={100}>
+                      <Row style={styles.cellerrss}>
+                        <Text style={styles.titletexterrssss}>Сумма</Text>
+                      </Row>
 
-                    {maindata.map((user, ids) => (
-                      <Row key={ids} style={styles.cell}>
-                        {(() => {
-                          if (ids == 0) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text
-                                  style={styles.titletextssseerrrdsfdsfsd00}
-                                >
-                                  {new Intl.NumberFormat("ru-Ru").format(
-                                    user.sum
-                                  )}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 1) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text style={styles.titletextsss}>
-                                  {new Intl.NumberFormat("ru-Ru").format(
-                                    user.sum
-                                  )}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 2) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text style={styles.titletextsss}>
-                                  {new Intl.NumberFormat("ru-Ru").format(
-                                    user.sum
-                                  )}
-                                </Text>
-                              </Row>
-                            );
-                          } else {
-                            return (
-                              <Row style={styles.cell}>
-                                <Text style={styles.titletext}>
-                                  {new Intl.NumberFormat("ru-Ru").format(
-                                    user.sum
-                                  )}
-                                </Text>
-                              </Row>
-                            );
-                          }
-                        })()}
+                      {maindata.map((user, ids) => (
+                        <Row key={ids} style={styles.cell}>
+                          {(() => {
+                            if (ids == 0) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text
+                                    style={styles.titletextssseerrrdsfdsfsd00}
+                                  >
+                                    {new Intl.NumberFormat("ru-Ru").format(
+                                      user.sum
+                                    )}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 1) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    {new Intl.NumberFormat("ru-Ru").format(
+                                      user.sum
+                                    )}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 2) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    {new Intl.NumberFormat("ru-Ru").format(
+                                      user.sum
+                                    )}
+                                  </Text>
+                                </Row>
+                              );
+                            } else {
+                              return (
+                                <Row style={styles.cell}>
+                                  <Text style={styles.titletext}>
+                                    {new Intl.NumberFormat("ru-Ru").format(
+                                      user.sum
+                                    )}
+                                  </Text>
+                                </Row>
+                              );
+                            }
+                          })()}
+                        </Row>
+                      ))}
+                    </Col>
+                    <Col size={35}>
+                      <Row style={styles.cellerrss}>
+                        <Text style={styles.titletexterrssss}>Сделки</Text>
                       </Row>
-                    ))}
-                  </Col>
-                  <Col size={35}>
-                    <Row style={styles.cellerrss}>
-                      <Text style={styles.titletexterrssss}>Сделки</Text>
-                    </Row>
 
-                    {maindata.map((user, ids) => (
-                      <Row key={ids} style={styles.cell}>
-                        {(() => {
-                          if (ids == 0) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text style={styles.titletextssseerrrdsfdsfsd}>
-                                  {user.count}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 1) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text style={styles.titletextsss}>
-                                  {user.count}
-                                </Text>
-                              </Row>
-                            );
-                          } else if (ids == 2) {
-                            return (
-                              <Row style={styles.cellf}>
-                                <Text style={styles.titletextsss}>
-                                  {user.count}
-                                </Text>
-                              </Row>
-                            );
-                          } else {
-                            return (
-                              <Row style={styles.cell}>
-                                <Text style={styles.titletext}>
-                                  {user.count}
-                                </Text>
-                              </Row>
-                            );
-                          }
-                        })()}
+                      {maindata.map((user, ids) => (
+                        <Row key={ids} style={styles.cell}>
+                          {(() => {
+                            if (ids == 0) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text
+                                    style={styles.titletextssseerrrdsfdsfsd}
+                                  >
+                                    {user.count}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 1) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    {user.count}
+                                  </Text>
+                                </Row>
+                              );
+                            } else if (ids == 2) {
+                              return (
+                                <Row style={styles.cellf}>
+                                  <Text style={styles.titletextsss}>
+                                    {user.count}
+                                  </Text>
+                                </Row>
+                              );
+                            } else {
+                              return (
+                                <Row style={styles.cell}>
+                                  <Text style={styles.titletext}>
+                                    {user.count}
+                                  </Text>
+                                </Row>
+                              );
+                            }
+                          })()}
+                        </Row>
+                      ))}
+                    </Col>
+                  </Grid>
+                </View>
+                <View>
+                  <Grid>
+                    <Col size={100}>
+                      <Row>
+                        <View style={styles.containere}>
+                          <Text style={styles.titletexte}>
+                            {new Intl.NumberFormat("ru-Ru").format(
+                              this.state.gen
+                            )}
+                          </Text>
+                        </View>
                       </Row>
-                    ))}
-                  </Col>
-                </Grid>
-                <Grid>
-                  <Col size={100}>
-                    <Row>
-                      <View style={styles.containere}>
-                        <Text style={styles.titletexte}>
-                          {new Intl.NumberFormat("ru-Ru").format(
-                            this.state.gen
-                          )}
-                        </Text>
-                      </View>
-                    </Row>
-                  </Col>
-                </Grid>
+                    </Col>
+                  </Grid>
+                </View>
               </View>
-              <View></View>
             </ScrollView>
           </View>
         );
@@ -530,6 +576,9 @@ const styles = StyleSheet.create({
     height: "100%",
 
     backgroundColor: "white",
+    flexDirection: "column", // inner items will be added vertically
+    flexGrow: 1, // all the available vertical space will be occupied by it
+    justifyContent: "space-between", // will create the gutter between body and footer
   },
   containere: {
     textAlign: "center", // <-- the magic
