@@ -164,7 +164,7 @@ export default class App extends Component {
         .catch((error) => {
           console.error("Error:", error);
         });
-    }, 5000);
+    }, 20000);
   }
 
   render() {
@@ -610,18 +610,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   titletexterrssss: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "900",
     color: "white",
   },
   titletextssseerrrdsfdsfsd: {
     color: "#ffc60a",
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "900",
   },
   titletextssseerrrdsfdsfsd00: {
     color: "#ffc60a",
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "900",
     paddingLeft: 0,
   },
@@ -652,11 +652,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   titletext: {
-    fontSize: 14,
+    fontSize: 18,
     color: "black",
   },
   titletextsss: {
-    fontSize: 14,
+    fontSize: 18,
     color: "white",
   },
   titletexte: {
